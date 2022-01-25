@@ -2,6 +2,7 @@ import json
 import sys
 import traceback
 from io import StringIO
+from typing import Dict, Union
 
 import config
 from celery.exceptions import SoftTimeLimitExceeded
@@ -25,12 +26,14 @@ blacklist = {'os', 'sys', 'subprocess', 'builtins', 'shututil', 'open', 'eval', 
 
 
 @celery.task(name='main.run_code', soft_time_limit=TIMEOUT)
-def run_code(code: str, input_data: str, number: int):
+def run_code(code: str, input_data: str, number: int) -> Dict[str, Union[str, int]]:
+    # change default stdout and stderr to object
     old_stdout = sys.stdout
     old_stderr = sys.stderr
     sys.stdout = stdout = StringIO()
     sys.stderr = stderr = StringIO()
 
+    # redeclare input method
     def input(prompt=''):
         print(prompt, end='')
         return input_data
@@ -40,7 +43,8 @@ def run_code(code: str, input_data: str, number: int):
             if obj in code:
                 raise ValueError(f'{obj} is not allowed in this code')
         else:
-            exec(code)
+            # globals and locals should be blank dict
+            exec(code, {}, {})
     except SoftTimeLimitExceeded:
         print('Time limit exceeded')
     except Exception:
