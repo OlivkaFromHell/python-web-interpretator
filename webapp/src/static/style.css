@@ -1,0 +1,56 @@
+body {
+    font-family: Trebuchet MS, sans-serif;
+}
+table,
+td {
+  border: 5px solid #5b5656;
+  width: 700px;
+  white-space:pre;
+  font-family: "Times New Roman", sans-serif;
+}
+thead,
+tfoot {
+  background-color: #333;
+  color: #fff;
+}
+th {
+  font-family: Trebuchet MS, sans-serif;
+  letter-spacing: 2px;
+  font-size: large;
+  font-weight: bold;
+}
+textarea {
+  resize: vertical;
+}
+.button_run {
+  width: 90px;  height: 30px;
+  color: #ffffff;
+  background-color: #e53153;
+  font-family: Georgia  , sans-serif;
+  font-weight: bold;
+  font-size: large;
+  letter-spacing: 1px;
+}
+
+.button_result {
+  width: 180px;  height: 30px;
+  color: #ffffff;
+  background-color: #6bc48d;
+  font-family: Georgia  , sans-serif;
+  font-weight: bold;
+  font-size: large;
+  letter-spacing: 1px;
+}
+
+#editor {
+    width: 400px;
+    height: 100px;
+    padding: 10px;
+    background-color: #444;
+    color: white;
+    font-size: 14px;
+    font-family: monospace;
+}
+.statement {
+    color: orange;
+}

@@ -3,65 +3,37 @@
   <head>
     <meta charset="UTF-8">
     <title>Python</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
-  
-  <style>
-    .code {}
-    body {
-        font-family: Trebuchet MS, sans-serif;
-    }
-    table,
-    td {
-      border: 5px solid #5b5656;
-      width: 700px;
-      white-space:pre;
-      font-family: "Times New Roman", sans-serif;
-    }
-    thead,
-    tfoot {
-      background-color: #333;
-      color: #fff;
-    }
-    th {
-      font-family: Trebuchet MS, sans-serif;
-      letter-spacing: 2px;
-      font-size: large;
-      font-weight: bold;
-    }
-    textarea {
-      resize: vertical;
-    }
-    input[type=button] {
-      width: 90px;  height: 30px;
-      color: #ffffff;
-      background-color: #e53153;
-      font-family: Georgia  , sans-serif;
-      font-weight: bold;
-      font-size: large;
-      letter-spacing: 1px;
-    }
-  </style>
 
   <body>
     <h1>Online python interpretator</h1>
     <hr>
     <h4>YOUR CODE:</h4>
-    <textarea class="textarea" id="code" cols="90" rows="10" placeholder="Enter your code">print('Hello, World!')</textarea><br>
+
+    <textarea class="code" id="code" cols="90" rows="10" placeholder="Enter your code">print('Hello, World!')</textarea><br>
     <h4>INPUT:</h4>
-    <textarea class="textarea" id="input" cols="40" rows="4" placeholder="optional"></textarea><br>
-    <p><input type="button" id="run" value="RUN"/></p>
+    <textarea class="input" id="input" cols="40" rows="4" placeholder="optional"></textarea><br>
+    <p><button class="button_run" id="run">RUN</button></p>
     <hr>
+    <p><button class="button_result" id="results" onClick="window.location.reload();">GET RESULTS</button></p>
+    <p><button class="button_clear" id="clear" onClick="window.location.reload();">CLEAR</button></p>
+
     <table>
       <tbody>
         <thead>
           <tr>
-            <th>RESULT</th>
+            <th colspan="2">RESULT</th>
           </tr>
         </thead>
-        <tr>
-          <td id="result">{{ result }}</td>
+      {% for res in data %}
+      <tr>
+          <td id="number">{{ res.number }}</td>
+          <td id="result", style="color: {{ res.color }}">{{ res.result }}</td>
         </tr>
+      {% endfor %}
     </table>
+
     <script src="/static/script.js"></script>
   </body>
   </html>

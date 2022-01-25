@@ -1,10 +1,11 @@
 let req = new XMLHttpRequest()
-req.onload = function() {
-  let result = document.querySelector('#result')
-  const data = JSON.parse(req.response)
-  result.innerText = data.result
-  result.style.color = data.color
-}
+
+
+// run code by clicking button
+document.querySelector('#clear').addEventListener('click', event => {
+  clear(event)
+})
+
 
 // run code by clicking button
 document.querySelector('#run').addEventListener('click', event => {
@@ -19,7 +20,7 @@ document.addEventListener('keypress', event => {
 })
 
 // tab indent in code block
-document.querySelector('.textarea').addEventListener('keydown', function(event) {
+document.querySelector('.code').addEventListener('keydown', function(event) {
   if (event.key === 'Tab') {
     event.preventDefault();
     let start = this.selectionStart;
@@ -41,12 +42,16 @@ document.querySelector('.textarea').addEventListener('keydown', function(event) 
 function request(event) {
   const str = document.querySelector('#code').value
   const inp = document.querySelector('#input').value
-  let a = {code: str, input: inp}
+  let a = {type: 'code', code: str, input: inp}
   req.open("POST", "http://localhost:5000", true);
   req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   req.send(JSON.stringify(a));
 }
 
-
-
+function clear(event) {
+  let a = {type: 'clear'}
+  req.open("POST", "http://localhost:5000", true);
+  req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  req.send(JSON.stringify(a));
+}
 
