@@ -6,19 +6,16 @@ from itertools import count
 from typing import Dict, Union
 
 import config
+from celery import Celery
 from celery.exceptions import SoftTimeLimitExceeded
 from flask import Flask, render_template, request
 from flask_cors import CORS
-from tasks import make_celery
 
 flask_app = Flask(__name__)
-flask_app.config.update(
-    CELERY_BROKER_URL='redis://redis:6379/0',
-    CELERY_RESULT_BACKEND='redis://redis:6379/0',
-)
+
 
 CORS(flask_app)
-celery = make_celery(flask_app)
+celery = Celery('tasks', broker='redis://localhost:6379', backend='redis://localhost:6379')
 
 TIMEOUT = config.TIMEOUT
 results = []
