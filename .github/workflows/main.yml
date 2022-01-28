@@ -19,4 +19,4 @@ jobs:
           ls -la
           isort . --check
           flake8 . --max-line-length=120
-          python3 -m pytest */tests
+          python3 -m pytest .
