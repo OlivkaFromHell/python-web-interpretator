@@ -14,10 +14,14 @@
     <textarea class="code" id="code" cols="90" rows="10" placeholder="Enter your code">print('Hello, World!')</textarea><br>
     <h4>INPUT:</h4>
     <textarea class="input" id="input" cols="40" rows="4" placeholder="optional"></textarea><br>
+    <p>
+      <label for="timeout">Execusion timeout:</label><br>
+      <input type="number" id="timeout" name="timeout" min="0.1" max="5" placeholder="max = 5 sec">
+    </p>
     <p><button class="button_run" id="run">RUN</button></p>
     <hr>
     <p><button class="button_result" id="results" onClick="window.location.reload();">GET RESULTS</button></p>
-    <p><button class="button_clear" id="clear" onClick="window.location.reload();">CLEAR</button></p>
+    <p><button class="button_clear" id="clear">CLEAR</button></p>
 
     <table>
       <tbody>

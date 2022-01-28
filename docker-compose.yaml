@@ -3,12 +3,9 @@ version: "3.9"
 services:
   webapp:
     build:
-      context: .
-      dockerfile: ./webapp
-
+      context: ./webapp
     ports:
       - "5000:5000"
-
     command: ["python", "./src/main.py"]
 
     depends_on:
@@ -18,13 +15,10 @@ services:
     image: redis
     restart: always
 
-  celery:
-    image: celery
-    build: ./webapp/src
-    command: celery -A main.celery worker
-
   worker:
     restart: always
     build:
       context: ./webapp
-
+    command: ['celery', '--workdir=./src', '-A', 'main.celery', 'worker']
+    links:
+      - redis

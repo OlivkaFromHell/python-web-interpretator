@@ -1,0 +1,22 @@
+# This is a basic workflow to help you get started with Actions1111
+
+name: CI
+
+on: push
+
+jobs:
+  code_quality:
+    runs-on: ubuntu-latest
+    name: run tests
+    container: python:3.9
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run script
+        run: |
+          pip install -r webapp/requirements.txt
+          ls -la
+          isort . --check
+          flake8 . --max-line-length=120
+          python3 -m pytest */tests

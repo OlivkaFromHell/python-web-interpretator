@@ -40,18 +40,21 @@ document.querySelector('.code').addEventListener('keydown', function(event) {
 // take data from code and input textareas,
 // send POST reqeuest on server and place result from response
 function request(event) {
-  const str = document.querySelector('#code').value
+  const user_code = document.querySelector('#code').value
   const inp = document.querySelector('#input').value
-  let a = {type: 'code', code: str, input: inp}
+  const timeout = document.querySelector('#timeout').value
+  let data = {type: 'code', code: user_code, input: inp, timeout: timeout}
   req.open("POST", "http://localhost:5000", true);
   req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  req.send(JSON.stringify(a));
+  req.send(JSON.stringify(data));
 }
 
+// clear data from table
 function clear(event) {
   let a = {type: 'clear'}
   req.open("POST", "http://localhost:5000", true);
   req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   req.send(JSON.stringify(a));
+  location.reload()
 }
 

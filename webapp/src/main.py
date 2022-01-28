@@ -2,6 +2,7 @@ import json
 import sys
 import traceback
 from io import StringIO
+from itertools import count
 from typing import Dict, Union
 
 import config
@@ -12,8 +13,8 @@ from tasks import make_celery
 
 flask_app = Flask(__name__)
 flask_app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379'
+    CELERY_BROKER_URL='redis://redis:6379/0',
+    CELERY_RESULT_BACKEND='redis://redis:6379/0',
 )
 
 CORS(flask_app)
@@ -21,8 +22,8 @@ celery = make_celery(flask_app)
 
 TIMEOUT = config.TIMEOUT
 results = []
-counter = 0
-blacklist = {'os', 'sys', 'subprocess', 'builtins', 'shututil', 'open', 'eval', 'exec'}
+counter = count(1)
+blacklist = {'os', 'sys', 'subprocess', 'builtins', 'shututil', 'open', 'eval', 'exec', 'flask', 'redis', 'celery'}
 
 
 @celery.task(name='main.run_code', soft_time_limit=TIMEOUT)
@@ -44,12 +45,14 @@ def run_code(code: str, input_data: str, number: int) -> Dict[str, Union[str, in
                 raise ValueError(f'{obj} is not allowed in this code')
         else:
             # globals and locals should be blank dict
-            exec(code, {}, {})
+            exec(code, {}, {'input': input})
     except SoftTimeLimitExceeded:
         print('Time limit exceeded')
     except Exception:
         traceback.print_exc()
-        result = stdout.getvalue() + stderr.getvalue()
+        err = stderr.getvalue().split('\n')
+        del err[1:3]  # del lines with source code
+        result = stdout.getvalue() + '\n'.join(err)
         return {'result': result, 'color': 'red', 'number': number}
     finally:
         sys.stdout = old_stdout
@@ -62,14 +65,19 @@ def run_code(code: str, input_data: str, number: int) -> Dict[str, Union[str, in
 def proceed():
     global results
     if request.method == 'POST':
-        global counter
+        global counter, TIMEOUT
         data = json.loads(request.data.decode('utf-8'))
         if data['type'] == 'clear':
             results = []
-            counter = 0
-        else:
-            counter += 1
-            res = run_code.delay(code=data['code'], input_data=data['input'], number=counter)
+            counter = count(1)
+        elif data['type'] == 'code':
+            if data['timeout']:
+                timeout = data['timeout']
+            else:
+                timeout = TIMEOUT
+
+            res = run_code.apply_async((data['code'], data['input'], next(counter)),
+                                       soft_time_limit=timeout)
             results.append(res.get())
             results.sort(key=lambda x: x['number'])
 

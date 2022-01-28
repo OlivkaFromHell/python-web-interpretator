@@ -42,15 +42,8 @@ textarea {
   letter-spacing: 1px;
 }
 
-#editor {
-    width: 400px;
-    height: 100px;
-    padding: 10px;
-    background-color: #444;
-    color: white;
-    font-size: 14px;
-    font-family: monospace;
-}
-.statement {
-    color: orange;
+#number {
+  width: 10%;
+  height: 10%;
+  text-align: center;
 }
