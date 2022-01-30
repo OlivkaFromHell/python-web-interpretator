@@ -6,6 +6,7 @@ from itertools import count
 from typing import Dict, Union
 
 import config
+from ast_module import check_code
 from celery import Celery
 from celery.exceptions import SoftTimeLimitExceeded
 from flask import Flask, render_template, request
@@ -15,12 +16,11 @@ flask_app = Flask(__name__)
 
 
 CORS(flask_app)
-celery = Celery('tasks', broker='redis://localhost:6379', backend='redis://localhost:6379')
+celery = Celery('tasks', broker='redis://redis:6379/0', backend='redis://redis:6379/0')
 
 TIMEOUT = config.TIMEOUT
 results = []
 counter = count(1)
-blacklist = {'os', 'sys', 'subprocess', 'builtins', 'shututil', 'open', 'eval', 'exec', 'flask', 'redis', 'celery'}
 
 
 @celery.task(name='main.run_code', soft_time_limit=TIMEOUT)
@@ -37,9 +37,9 @@ def run_code(code: str, input_data: str, number: int) -> Dict[str, Union[str, in
         return input_data
 
     try:
-        for obj in blacklist:
-            if obj in code:
-                raise ValueError(f'{obj} is not allowed in this code')
+        find_unallowed_methods = check_code(code)
+        if find_unallowed_methods:
+            raise ValueError(f'{find_unallowed_methods[0]} is not allowed in this code')
         else:
             # globals and locals should be blank dict
             exec(code, {}, {'input': input})

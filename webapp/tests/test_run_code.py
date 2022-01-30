@@ -47,17 +47,22 @@ def test_open_exec_eval_case(code, input_data, err):
 
 @pytest.mark.parametrize('code, input_data, err', [
     ("import os", '', 'ValueError: os is not allowed in this code\n'),
-    ("import shututil", '', 'ValueError: shututil is not allowed in this code\n'),
+    ("import shutil", '', 'ValueError: shutil is not allowed in this code\n'),
     ("import flask", '', 'ValueError: flask is not allowed in this code\n'),
 ])
 def test_import_case(code, input_data, err):
     assert run_code(code, input_data=input_data, number=1)['result'].endswith(err)
 
 
-@pytest.mark.skip
+def test__import__case():
+    code = 'os = "o" + "s"\n__import__(os)'
+    err = 'ValueError: __import__ is not allowed in this code\n'
+    assert run_code(code, input_data='', number=1)['result'].endswith(err)
+
+
 @pytest.mark.parametrize('code, result', [
     ("print('open the door')", 'open the door\n'),
-    ("print(''os - standard pkg')", 'os - standard pkg'),
+    ("print('os - standard pkg')", 'os - standard pkg\n'),
 ])
 def test_open(code, result):
     assert run_code(code, input_data='', number=1) == \
